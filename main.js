@@ -21,6 +21,10 @@ class Panel {
         if (currentNum === parseInt(this.el.textContent, 10)) {
             this.el.classList.add('pressed');
             currentNum++;
+            if(currentNum === 300) {
+                clearTimeout(timeoutId);
+                currentNum = 0;
+            }
         }
     }
 
@@ -29,7 +33,7 @@ class Panel {
 class Board {
     constructor() {
         this.panels = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 300; i++) {
             this.panels.push(new Panel());
         }
         this.setup();
@@ -45,7 +49,7 @@ class Board {
     }
 
     activate() {
-        const nums = [0, 1, 2, 3,];
+        const nums = [...Array(300).keys()];
         this.panels.forEach(panel => {
             const num = nums.splice(Math.floor(Math.random() * nums.length), 1)[0];
             panel.activate(num);
@@ -54,22 +58,30 @@ class Board {
 }
 
 let currentNum = 0;
-let startTimer;
+let startTime;
 let timeoutId;
 
 const board = new Board();
+
 const btn = document.getElementById('btn');
 btn.addEventListener('click', () => {
     board.activate();
-    startTimer = Date.now();
-    // runTimer();
+    startTime = Date.now();
+    if(btn.textContent = "start") {
+        btn.textContent = "reset";
+    } else if(btn.textContent = "reset") {
+        currentNum = 0;
+        activate();
+        btn.textContent = "start"
+    }
+    runTimer();
 });
 function runTimer() {
+    const timer = document.getElementById('timer');
+    timer.textContent = ((Date.now() - startTime) / 1000).toFixed(2);
+    // nowに()をつけないとメソッドにならないため、バグになる。今回は(NaN)になった
 
     timeoutId = setTimeout(() => {
-        // const timer = document.getElementById('timer');
-        // timer.textContent = ((Date.now - startTimer) / 1000).toFixed(2);
-        console.log((Date.now - startTimer) / 1000);
         runTimer();
     }, 10);
 }
